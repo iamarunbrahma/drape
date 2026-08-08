@@ -1,0 +1,79 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Drape MCP</title>
+<style>
+  :root { --paper:#f6f2ea; --paper2:#efe9de; --ink:#201d18; --soft:#6f675c; --accent:#b5461f; --line:#e0d8c9; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .wrap { max-width:1180px; margin:0 auto; padding:44px 56px; }
+  .eyebrow { font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--soft); }
+  h1 { font-family:Georgia,"Times New Roman",serif; font-size:46px; font-weight:600;
+       letter-spacing:-.01em; margin:10px 0 6px; }
+  .sub { color:var(--soft); font-size:17px; max-width:60ch; line-height:1.55; margin:0 0 26px; }
+  .grid { display:grid; grid-template-columns:1fr 1.15fr; gap:22px; align-items:start; }
+  .card { background:var(--paper2); border:1px solid var(--line); border-radius:16px; padding:18px 20px; }
+  .card h2 { font-family:Georgia,serif; font-size:17px; font-weight:600; margin:0 0 12px; }
+  .tool { display:flex; gap:10px; align-items:baseline; padding:8px 0; border-bottom:1px solid var(--line); }
+  .tool:last-child { border-bottom:0; }
+  .tool code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13.5px; font-weight:600; }
+  .tool span { color:var(--soft); font-size:12.5px; }
+  pre { margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+        line-height:1.55; color:#33302a; white-space:pre-wrap; }
+  .k { color:var(--accent); }
+  .s { color:#3f6b4a; }
+  .n { color:#2f5d86; }
+  .endpoint { margin-top:22px; font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--soft); }
+  .endpoint b { color:var(--ink); }
+</style></head>
+<body><div class="wrap">
+  <p class="eyebrow">Agentic surface</p>
+  <h1>The color engine, over MCP</h1>
+  <p class="sub">YouCam already speaks MCP, so an agent can ask it for the colors of a face.
+     Drape turns those into a season, a palette, and real garments ranked by measured color
+     distance. No YouCam credentials needed: the engine is pure, so it composes.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>tools/list</h2>
+      <div class="tool"><code>analyze_season</code><span>season, axes, palette, confidence</span></div>
+      <div class="tool"><code>find_garments</code><span>ΔE-ranked real products</span></div>
+      <div class="tool"><code>check_color</code><span>does this shade suit me?</span></div>
+      <div class="tool"><code>correct_read</code><span>re-derive with an axis set by hand</span></div>
+      <p class="endpoint">POST <b>/api/mcp</b><br>protocol 2025-06-18</p>
+    </div>
+
+    <div class="card">
+      <h2>find_garments &rarr; live response</h2>
+<pre>{
+  <span class="k">"season"</span>: <span class="s">"Deep Autumn"</span>,
+  <span class="k">"matches"</span>: [
+    {
+      <span class="k">"retailer"</span>: <span class="s">"Uniqlo"</span>,
+      <span class="k">"product"</span>: <span class="s">"Soft Knitted Fleece T-Shirt"</span>,
+      <span class="k">"color"</span>: <span class="s">"Wine"</span>,
+      <span class="k">"measured_hex"</span>: <span class="s">"#6b2f3d"</span>,
+      <span class="k">"delta_e"</span>: <span class="n">4.39</span>,
+      <span class="k">"verdict"</span>: <span class="s">"very close"</span>,
+      <span class="k">"closest_palette_color"</span>: <span class="s">"Warm Aubergine"</span>
+    }
+  ]
+}</pre>
+    </div>
+
+    <div class="card">
+      <h2>check_color &rarr; live response</h2>
+<pre>{
+  <span class="k">"season"</span>: <span class="s">"Deep Autumn"</span>,
+  <span class="k">"garment_hex"</span>: <span class="s">"#1f5f5b"</span>,
+  <span class="k">"delta_e"</span>: <span class="n">0</span>,
+  <span class="k">"verdict"</span>: <span class="s">"an exact match"</span>,
+  <span class="k">"closest_palette_color"</span>: {
+    <span class="k">"name"</span>: <span class="s">"Deep Teal"</span>,
+    <span class="k">"hex"</span>: <span class="s">"#1f5f5b"</span>
+  },
+  <span class="k">"suits_them"</span>: <span class="n">true</span>,
+  <span class="k">"nearer_to_the_shade_to_avoid"</span>: <span class="n">false</span>
+}</pre>
+    </div>
+  </div>
+</div></body></html>

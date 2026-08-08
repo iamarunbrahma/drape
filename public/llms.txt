@@ -1,0 +1,417 @@
+# Drape MCP Server
+
+> Turns a measured skin color into a seasonal color analysis, a wearable palette, and real
+> garments ranked by CIEDE2000 against colors measured from the retailer's own fabric
+> swatches. Exposed over MCP so an agent can do personal color analysis without a browser.
+
+Perfect Corp ships YouCam itself over MCP, so an agent can already obtain the hex values of
+a face. It cannot turn those into a season, a palette, or ranked real garments. This server
+does that, and needs no YouCam credentials of its own because the engine is pure: it
+composes with theirs rather than duplicating it.
+
+## Connection
+
+|     Field      |                     Value                      |
+|:--------------:|:----------------------------------------------:|
+|      URL       |   `https://drape-youcam.vercel.app/api/mcp`    |
+|   Transport    |         Streamable HTTP (JSON-RPC 2.0)         |
+|    Protocol    |                  `2025-06-18`                  |
+|     Server     |                 `drape` v1.0.0                 |
+| Authentication |                      none                      |
+|     State      | stateless; no session id is issued or required |
+
+Claude Code:
+
+```bash
+claude mcp add --transport http drape https://drape-youcam.vercel.app/api/mcp
+```
+
+Claude Desktop, in `claude_desktop_config.json`:
+
+```json
+{ "mcpServers": { "drape": { "type": "http", "url": "https://drape-youcam.vercel.app/api/mcp" } } }
+```
+
+## Tools
+
+### `analyze_season`
+
+Turn measured facial colors into a 12-season color analysis. Give it the skin hex (and eye hex if you have it) as returned by YouCam Skin Tone Analysis. Returns the season, the three underlying axes, the palette, and a calibrated confidence score that says how trustworthy the read is and why.
+
+| Parameter  |        Type        | Required |                               Description                               |
+|:----------:|:------------------:|:--------:|:-----------------------------------------------------------------------:|
+| `skin_hex` |      `string`      | required |                        skin color, e.g. #bd9a80                         |
+| `eye_hex`  |      `string`      | optional |                  eye color; sharpens the clarity axis                   |
+| `lighting` | `good` / `notgood` | optional | YouCam face_quality.lighting, if known; poor lighting lowers confidence |
+
+Example call:
+
+```json
+{
+  "name": "analyze_season",
+  "arguments": {
+    "skin_hex": "#be9c82",
+    "eye_hex": "#4f4030"
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "season": "True Spring",
+  "family": "Spring",
+  "undertone": "warm",
+  "depth": "light",
+  "clarity": "true",
+  "measurements": {
+    "hue_angle": 64.42,
+    "ita": 42.41,
+    "chroma": 20.36,
+    "lightness": 66.78
+  },
+  "confidence": {
+    "score": 41,
+    "level": "low",
+    "least_certain_axis": "depth",
+    "reasons": [
+      "Depth is the least certain part of this read. Your ITA is 42.4, only 1.4 from the boundary at 41."
+    ]
+  },
+  "palette": {
+    "tagline": "Warm, clear and golden",
+    "why": "Warm and bright is your sweet spot: think coral, golden yellow and warm turquoise. Muted or dusty shades dull your natural warmth.",
+    "colors": [
+      {
+        "name": "Coral",
+        "hex": "#ff7a5c"
+      },
+      {
+        "name": "Golden Yellow",
+        "hex": "#ffca3a"
+      },
+      {
+        "name": "Warm Turquoise",
+        "hex": "#2ec4b6"
+      },
+      {
+        "name": "Apple Green",
+        "hex": "#8fd14f"
+      },
+      {
+        "name": "Warm Pink",
+        "hex": "#ff8fa3"
+      },
+      {
+        "name": "Peach",
+        "hex": "#ffab73"
+      },
+      {
+        "name": "Bright Warm Red",
+        "hex": "#f4442e"
+      },
+      {
+        "name": "Clear Blue",
+        "hex": "#2f9fd6"
+      },
+      {
+        "name": "Marigold",
+        "hex": "#ffa62b"
+      },
+      {
+        "name": "Fern",
+        "hex": "#3f8f3a"
+      }
+    ],
+    "neutrals": [
+      {
+        "name": "Ivory",
+        "hex": "#f4ead2"
+      },
+      {
+        "name": "Camel",
+        "hex": "#c69551"
+      },
+      {
+        "name": "Warm Navy",
+        "hex": "#2b3a67"
+      }
+    ],
+    "hair": [
+      {
+        "name": "Golden Blonde",
+        "hex": "#cba055"
+      },
+      {
+        "name": "Copper",
+        "hex": "#a85a2b"
+      },
+      {
+        "name": "Warm Brown",
+        "hex": "#7d5230"
+      }
+    ],
+    "avoid": {
+      "name": "Dusty Mauve",
+      "hex": "#9a7f89"
+    }
+  }
+}
+```
+
+### `find_garments`
+
+Rank real garments by how close their measured color is to a season palette, using CIEDE2000. Colors are measured from the retailer's own fabric swatch images, not from product titles, so a low delta E is evidence rather than a keyword guess. Only garments the retailer is currently selling are returned, so the links are safe to hand to a shopper. Returns product links.
+
+| Parameter  |       Type        | Required |                                   Description                                    |
+|:----------:|:-----------------:|:--------:|:--------------------------------------------------------------------------------:|
+| `skin_hex` |     `string`      | required |                    skin color; the season is derived from it                     |
+| `eye_hex`  |     `string`      | optional |                       eye color; sharpens the clarity axis                       |
+|  `gender`  | `female` / `male` | optional |                       which half of the catalog to search                        |
+|  `limit`   |     `integer`     | optional | how many matches to return; fewer come back if nothing else is within delta E 15 |
+
+Example call:
+
+```json
+{
+  "name": "find_garments",
+  "arguments": {
+    "skin_hex": "#be9c82",
+    "gender": "female",
+    "limit": 2
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "season": "True Spring",
+  "matches": [
+    {
+      "retailer": "Uniqlo",
+      "product": "Gathered Babydoll Camisole",
+      "color": "Red",
+      "measured_hex": "#fe7e6f",
+      "delta_e": 4.5,
+      "verdict": "very close",
+      "closest_palette_color": "Coral",
+      "url": "https://www.uniqlo.com/us/en/products/E483523-000/00?colorDisplayCode=14"
+    },
+    {
+      "retailer": "Uniqlo",
+      "product": "Boat Neck T-Shirt",
+      "color": "Blue",
+      "measured_hex": "#0198e7",
+      "delta_e": 4.75,
+      "verdict": "very close",
+      "closest_palette_color": "Clear Blue",
+      "url": "https://www.uniqlo.com/us/en/products/E487819-000/00?colorDisplayCode=66"
+    }
+  ]
+}
+```
+
+### `check_color`
+
+Answer "does this specific color suit me?" for a garment the shopper is already looking at. Returns the CIEDE2000 distance to the nearest color in their palette and a plain-language verdict. Under 2.3 is a just-noticeable difference; beyond 15 the color is not in the palette.
+
+|   Parameter   |   Type   | Required |               Description                |
+|:-------------:|:--------:|:--------:|:----------------------------------------:|
+|  `skin_hex`   | `string` | required |        the shopper, e.g. #bd9a80         |
+|   `eye_hex`   | `string` | optional |   eye color; sharpens the clarity axis   |
+| `garment_hex` | `string` | required | the color being considered, e.g. #1f5f5b |
+
+Example call:
+
+```json
+{
+  "name": "check_color",
+  "arguments": {
+    "skin_hex": "#be9c82",
+    "garment_hex": "#1f5f5b"
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "season": "True Spring",
+  "garment_hex": "#1f5f5b",
+  "delta_e": 26.78,
+  "verdict": "a different color",
+  "closest_palette_color": {
+    "name": "Fern",
+    "hex": "#3f8f3a"
+  },
+  "suits_them": false,
+  "nearer_to_the_shade_to_avoid": false
+}
+```
+
+### `check_hair`
+
+Compare the hair color measured from a photo against the shades the wearer's season calls for. YouCam Skin Tone Analysis returns hair alongside skin and eyes, so this needs no extra capture. Returns the nearest in-season shade, the CIEDE2000 distance to it, and the full set of shades for that season.
+
+| Parameter  |   Type   | Required |                Description                |
+|:----------:|:--------:|:--------:|:-----------------------------------------:|
+| `skin_hex` | `string` | required | skin color; the season is derived from it |
+| `hair_hex` | `string` | required |   hair color as measured, e.g. #3a2a20    |
+| `eye_hex`  | `string` | optional |   eye color; sharpens the clarity axis    |
+
+Example call:
+
+```json
+{
+  "name": "check_hair",
+  "arguments": {
+    "skin_hex": "#be9c82",
+    "hair_hex": "#3a2a20"
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "season": "True Spring",
+  "measured_hair": "#3a2a20",
+  "in_range": true,
+  "delta_e": 18.61,
+  "nearest_shade": {
+    "name": "Warm Brown",
+    "hex": "#7d5230"
+  },
+  "verdict": "Your hair already sits in your season's range, closest to Warm Brown.",
+  "season_hair_shades": [
+    {
+      "name": "Golden Blonde",
+      "hex": "#cba055"
+    },
+    {
+      "name": "Copper",
+      "hex": "#a85a2b"
+    },
+    {
+      "name": "Warm Brown",
+      "hex": "#7d5230"
+    }
+  ]
+}
+```
+
+### `correct_read`
+
+Re-derive the season with one or more axes set by hand. Use this when the shopper disagrees with the measured read, which is common when confidence is low. Costs nothing and needs no new photo: the classifier is deterministic.
+
+|  Parameter  |            Type             | Required |             Description              |
+|:-----------:|:---------------------------:|:--------:|:------------------------------------:|
+| `skin_hex`  |          `string`           | required |       skin color, e.g. #bd9a80       |
+|  `eye_hex`  |          `string`           | optional | eye color; sharpens the clarity axis |
+| `undertone` | `warm` / `cool` / `neutral` | optional |   override the measured undertone    |
+|   `depth`   | `light` / `medium` / `deep` | optional |     override the measured depth      |
+|  `clarity`  | `bright` / `true` / `soft`  | optional |    override the measured clarity     |
+
+Example call:
+
+```json
+{
+  "name": "correct_read",
+  "arguments": {
+    "skin_hex": "#be9c82",
+    "depth": "deep"
+  }
+}
+```
+
+Returns:
+
+```json
+{
+  "measured_season": "True Spring",
+  "corrected_season": "Deep Autumn",
+  "axes_changed": [
+    "depth"
+  ],
+  "undertone": "warm",
+  "depth": "deep",
+  "clarity": "true",
+  "palette": [
+    {
+      "name": "Chocolate",
+      "hex": "#5a3720"
+    },
+    {
+      "name": "Deep Teal",
+      "hex": "#1f5f5b"
+    },
+    {
+      "name": "Brick Red",
+      "hex": "#9e3b2e"
+    },
+    {
+      "name": "Deep Olive",
+      "hex": "#5b5f22"
+    },
+    {
+      "name": "Mustard",
+      "hex": "#9d6e0c"
+    },
+    {
+      "name": "Warm Aubergine",
+      "hex": "#5a2a3a"
+    },
+    {
+      "name": "Forest Green",
+      "hex": "#2f5233"
+    },
+    {
+      "name": "Bronze",
+      "hex": "#8a6321"
+    },
+    {
+      "name": "Deep Marine",
+      "hex": "#23485f"
+    },
+    {
+      "name": "Pumpkin",
+      "hex": "#c56b1e"
+    }
+  ]
+}
+```
+
+## Interpreting the numbers
+
+- **Delta E** is CIEDE2000. Below 1 is an exact match, below 2.3 is a just-noticeable
+  difference, below 5 is very close, below 10 is close, below 25 is the same family.
+- **Beyond delta E 15 a color is not in the palette.** `find_garments` returns nothing past
+  that rather than padding the list, so fewer results than `limit` means the catalog had
+  nothing that close, not that something failed.
+- **Confidence** is scored from how near the reading sits to a decision boundary and from
+  photo quality. A low score is a genuine signal to ask the user before acting, and
+  `correct_read` is the way to act on their answer.
+- **Undertone comes from the CIELAB hue angle**, not from b\*. Thresholding b\* reads darkness
+  as coolness and fails at both ends of the human range; the comparison against the Monk
+  Skin Tone Scale is at https://drape-youcam.vercel.app/fairness.
+
+## Sourcing and freshness
+
+- Garment colors are measured from each retailer's own fabric swatch image, never taken
+  from a product title. If we chose the hex, a close delta E would be circular.
+- Availability is re-checked daily against the retailer, and colorways they have stopped
+  selling are excluded, so product links are safe to hand to a shopper.
+- The color engine itself is deterministic and offline. `analyze_season`, `check_color` and
+  `correct_read` make no outbound calls at all.
+
+## Related pages
+
+- [Studio](https://drape-youcam.vercel.app/): the analysis, try-on and shopping flow for humans.
+- [Across skin tones](https://drape-youcam.vercel.app/fairness): the engine checked against the Monk Skin Tone Scale.
+- [Inside a shop's page](https://drape-youcam.vercel.app/retail): the same ranking embedded in a product page.
+- [For agents](https://drape-youcam.vercel.app/mcp): this server, with a live console for each tool.

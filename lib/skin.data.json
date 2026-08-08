@@ -1,0 +1,179 @@
+{
+  "deep": {
+    "concerns": [
+      {
+        "key": "hd_moisture",
+        "label": "Moisture",
+        "score": 63
+      },
+      {
+        "key": "hd_radiance",
+        "label": "Radiance",
+        "score": 80
+      },
+      {
+        "key": "hd_firmness",
+        "label": "Firmness",
+        "score": 79
+      },
+      {
+        "key": "hd_texture",
+        "label": "Texture",
+        "score": 65
+      },
+      {
+        "key": "hd_redness",
+        "label": "Redness",
+        "score": 95
+      },
+      {
+        "key": "hd_oiliness",
+        "label": "Oiliness",
+        "score": 76
+      },
+      {
+        "key": "hd_acne",
+        "label": "Acne",
+        "score": 87
+      },
+      {
+        "key": "hd_age_spot",
+        "label": "Even tone",
+        "score": 88
+      },
+      {
+        "key": "hd_dark_circle",
+        "label": "Dark circles",
+        "score": 70
+      },
+      {
+        "key": "hd_pore",
+        "label": "Pores",
+        "score": 53
+      },
+      {
+        "key": "hd_wrinkle",
+        "label": "Wrinkles",
+        "score": 79
+      }
+    ]
+  },
+  "medium": {
+    "concerns": [
+      {
+        "key": "hd_moisture",
+        "label": "Moisture",
+        "score": 78
+      },
+      {
+        "key": "hd_radiance",
+        "label": "Radiance",
+        "score": 88
+      },
+      {
+        "key": "hd_firmness",
+        "label": "Firmness",
+        "score": 82
+      },
+      {
+        "key": "hd_texture",
+        "label": "Texture",
+        "score": 84
+      },
+      {
+        "key": "hd_redness",
+        "label": "Redness",
+        "score": 75
+      },
+      {
+        "key": "hd_oiliness",
+        "label": "Oiliness",
+        "score": 79
+      },
+      {
+        "key": "hd_acne",
+        "label": "Acne",
+        "score": 93
+      },
+      {
+        "key": "hd_age_spot",
+        "label": "Even tone",
+        "score": 93
+      },
+      {
+        "key": "hd_dark_circle",
+        "label": "Dark circles",
+        "score": 75
+      },
+      {
+        "key": "hd_pore",
+        "label": "Pores",
+        "score": 79
+      },
+      {
+        "key": "hd_wrinkle",
+        "label": "Wrinkles",
+        "score": 78
+      }
+    ]
+  },
+  "light": {
+    "concerns": [
+      {
+        "key": "hd_moisture",
+        "label": "Moisture",
+        "score": 78
+      },
+      {
+        "key": "hd_radiance",
+        "label": "Radiance",
+        "score": 79
+      },
+      {
+        "key": "hd_firmness",
+        "label": "Firmness",
+        "score": 65
+      },
+      {
+        "key": "hd_texture",
+        "label": "Texture",
+        "score": 97
+      },
+      {
+        "key": "hd_redness",
+        "label": "Redness",
+        "score": 99
+      },
+      {
+        "key": "hd_oiliness",
+        "label": "Oiliness",
+        "score": 99
+      },
+      {
+        "key": "hd_acne",
+        "label": "Acne",
+        "score": 99
+      },
+      {
+        "key": "hd_age_spot",
+        "label": "Even tone",
+        "score": 87
+      },
+      {
+        "key": "hd_dark_circle",
+        "label": "Dark circles",
+        "score": 68
+      },
+      {
+        "key": "hd_pore",
+        "label": "Pores",
+        "score": 99
+      },
+      {
+        "key": "hd_wrinkle",
+        "label": "Wrinkles",
+        "score": 79
+      }
+    ]
+  }
+}

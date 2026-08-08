@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* A chromatically neutral surround.
+ *
+ * This used to be a warm cream, which measured chroma 4.3 to 9.5 at hue 90 on our own
+ * engine: a yellow cast. For an app whose entire job is asking people to judge color that
+ * is a real fault, not a preference. A tinted surround shifts how the colors inside it
+ * appear (simultaneous contrast), which is why ISO 3664 specifies a neutral matte surround
+ * for appraising color. Everything here now measures under chroma 1.1, so the palette is
+ * seen against grey the way print is proofed against grey. The single warm accent is
+ * small enough not to contaminate the field, and it keeps the brand from going clinical. */
+@theme inline {
+  --color-paper: #fdfcfb;
+  --color-paper-2: #f4f2f0;
+  --color-ink: #191614;
+  --color-ink-soft: #5f5a55;
+  --color-line: #e4e0da;
+  --color-accent: #b5461f;
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+:root {
+  /* The canvas sits a step below the cards so they lift off it, like work on a gallery wall. */
+  --background: #faf8f7;
+  --foreground: #191614;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fraunces carries an optical-size axis, so headlines get the display cut (high contrast,
+   fine hairlines) and settle a little tighter, while body copy keeps the sturdier text cut.
+   That is the whole point of opsz, and leaving it on auto without tightening the tracking
+   wastes it. */
+.font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.021em;
+  font-synthesis-weight: none;
+}
+
+/* Small caps metadata: measurements should read as measurements. */
+.meta {
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+/* Light falling across draped cloth.
+ *
+ * Four very wide radial washes in the brand's own colors, each at around five percent, so
+ * the field has the soft directional light of fabric rather than being a flat slab. They
+ * are deliberately too faint to tint anything: a colored surround shifts how the palette
+ * inside it is perceived, which is the one thing a color-appraisal surface must not do.
+ * Fixed attachment keeps it a single field behind the whole page rather than something
+ * that scrolls past. On top, desaturated fractal noise for the tooth of printed paper. */
+.paper-grain {
+  position: relative;
+  isolation: isolate;
+}
+
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(58rem 42rem at 10% 4%, rgba(181, 70, 31, 0.07), transparent 62%),
+    radial-gradient(52rem 40rem at 92% 18%, rgba(74, 107, 79, 0.06), transparent 62%),
+    radial-gradient(48rem 36rem at 76% 96%, rgba(111, 143, 181, 0.055), transparent 64%),
+    radial-gradient(44rem 34rem at 6% 92%, rgba(199, 147, 32, 0.05), transparent 62%),
+    var(--background);
+}
+
+.paper-grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='160'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='4'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'%20opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes swatch-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.swatch-in { animation: swatch-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+/* A white sweep was invisible once the surfaces went near-white in the redesign, so a
+   loading card read as an empty one. Sweep a dark tint instead: it shows on any light
+   surface, and does not depend on the exact tone underneath. */
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.07), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 1.1s linear infinite; }

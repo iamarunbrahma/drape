@@ -1,0 +1,35 @@
+# dependencies
+/node_modules
+.pnp
+.pnp.*
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+/build
+dist/
+
+# misc
+.DS_Store
+*.pem
+*.log
+*.tsbuildinfo
+next-env.d.ts
+
+# env files
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# generated demo voiceover (rebuild with scripts/build-voiceover.mjs)
+docs/voiceover/
+
+# rendered demo video (rebuild: scripts/record-demo.py + scripts/assemble-video.py)
+docs/video/*.mp4
+# but keep the captions: small, and worth reviewing in diffs
+!docs/video/*.srt

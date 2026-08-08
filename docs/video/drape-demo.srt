@@ -1,0 +1,239 @@
+1
+00:00:00,000 --> 00:00:04,194
+This is one woman, photographed once,
+wearing the same garment in two colors.
+
+2
+00:00:04,194 --> 00:00:06,209
+Watch her face rather than the shirt.
+
+3
+00:00:06,659 --> 00:00:11,358
+Some colors suit you and some drain you,
+and most people never find out which.
+
+4
+00:00:11,358 --> 00:00:15,576
+A stylist will tell you for a hundred and
+fifty dollars. This is Drape.
+
+5
+00:00:15,576 --> 00:00:20,095
+It answers the same question from one
+photo, in about twenty seconds, free.
+
+6
+00:00:20,545 --> 00:00:21,818
+You give it a selfie.
+
+7
+00:00:21,818 --> 00:00:26,304
+Perfect Corp's YouCam API measures the
+real color of your skin, your eyes,
+
+8
+00:00:26,304 --> 00:00:29,214
+your lips and your hair, straight off the
+image.
+
+9
+00:00:29,664 --> 00:00:33,890
+Our engine turns those measurements into
+your season. There are twelve,
+
+10
+00:00:33,890 --> 00:00:38,418
+and each carries about a dozen shades
+chosen to sit well against your face.
+
+11
+00:00:38,868 --> 00:00:40,535
+Here is what most tools skip.
+
+12
+00:00:40,535 --> 00:00:42,317
+Drape tells you how sure it is.
+
+13
+00:00:42,767 --> 00:00:46,797
+This read scores forty-one out of a
+hundred, and it says why in one line.
+
+14
+00:00:46,797 --> 00:00:51,213
+Her depth measurement came in one point
+four from the boundary between light and
+
+15
+00:00:51,213 --> 00:00:54,525
+medium. That close, it could go either
+way, so Drape says so.
+
+16
+00:00:54,975 --> 00:00:57,721
+And if you think it has read you wrong,
+you can overrule it.
+
+17
+00:00:58,171 --> 00:01:01,962
+Tap depth, choose medium, and the whole
+result recalculates in your browser.
+
+18
+00:01:01,962 --> 00:01:03,608
+Confidence climbs to eighty-four,
+
+19
+00:01:03,608 --> 00:01:06,801
+because you have just settled the one
+thing it was unsure about.
+
+20
+00:01:06,801 --> 00:01:08,847
+That correction is free and calls no API.
+
+21
+00:01:09,297 --> 00:01:11,029
+Then it proves the answer on you.
+
+22
+00:01:11,029 --> 00:01:14,282
+YouCam's virtual try-on paints the colors
+onto your own photo.
+
+23
+00:01:14,282 --> 00:01:15,752
+One shade from your palette,
+
+24
+00:01:15,752 --> 00:01:18,743
+and one taken deliberately from the
+opposite temperature.
+
+25
+00:01:19,193 --> 00:01:21,158
+Same garment, same face, same light.
+
+26
+00:01:21,158 --> 00:01:23,287
+The color is the only thing that moved.
+
+27
+00:01:23,737 --> 00:01:26,147
+A palette you cannot buy is a piece of
+trivia.
+
+28
+00:01:26,597 --> 00:01:30,916
+So Drape ranks three hundred and
+fifty-three real garments you can order to
+
+29
+00:01:30,916 --> 00:01:32,829
+We did not trust the product names.
+
+30
+00:01:32,829 --> 00:01:36,983
+Every one of those colors was measured
+from the retailer's own fabric photo.
+
+31
+00:01:37,433 --> 00:01:39,611
+This top match scores four point five.
+
+32
+00:01:39,611 --> 00:01:44,026
+Below about two point three, most people
+cannot tell two colors apart at all,
+
+33
+00:01:44,026 --> 00:01:46,491
+so on a shop floor this reads as her
+shade.
+
+34
+00:01:46,941 --> 00:01:51,516
+More in the studio. Your own hair color,
+held against the shades your season wears.
+
+35
+00:01:51,516 --> 00:01:54,138
+Eleven skin scores from YouCam's skin
+analysis.
+
+36
+00:01:54,588 --> 00:01:56,806
+And you can ask it for a whole outfit.
+
+37
+00:01:56,806 --> 00:02:01,124
+This one is generative rather than
+measured, so give it a moment to think.
+
+38
+00:02:01,574 --> 00:02:04,937
+Clothes, styling and setting, all built
+around True Spring.
+
+39
+00:02:04,937 --> 00:02:07,786
+Inspiration, where the palette is the
+measurement.
+
+40
+00:02:08,236 --> 00:02:10,525
+Now the part we are least comfortable
+with.
+
+41
+00:02:10,525 --> 00:02:12,760
+Color analysis was built around pale skin,
+
+42
+00:02:12,760 --> 00:02:17,125
+so we tested our own engine against the
+Monk Skin Tone Scale, ten reference tones,
+
+43
+00:02:17,125 --> 00:02:20,211
+and we failed. Our rule was reading dark
+skin as cool skin.
+
+44
+00:02:20,211 --> 00:02:23,405
+It got five of the ten wrong, all at the
+light or deep ends.
+
+45
+00:02:23,855 --> 00:02:26,168
+So we rebuilt it on a different
+measurement,
+
+46
+00:02:26,168 --> 00:02:29,007
+and we published the before and the after
+on the site.
+
+47
+00:02:29,007 --> 00:02:31,793
+You can check our working instead of
+taking our word.
+
+48
+00:02:32,243 --> 00:02:36,021
+Underneath: five YouCam APIs, two hundred
+and seven tests,
+
+49
+00:02:36,021 --> 00:02:39,539
+and the whole color engine open to AI
+agents over MCP.
+
+50
+00:02:39,989 --> 00:02:44,374
+Drape. One photo, the colors that suit
+you, worn on your own face,
+
+51
+00:02:44,374 --> 00:02:46,601
+and clothes you can actually buy.
